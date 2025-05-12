@@ -1,3 +1,5 @@
+# app/routes/auth.py
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
@@ -6,10 +8,11 @@ from app.core.security import crear_token, verificar_contraseña
 from app.models.usuario import Usuario
 from app.models.rol import Rol
 from app.models.relaciones import usuarios_roles
+from app.schemas import UsuarioLoginDTO, UsuarioDTO, Token
 
 router = APIRouter(prefix="/auth", tags=["Autenticación"])
 
-@router.post("/login")
+@router.post("/login", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     # Buscar el usuario por nombre de usuario
     usuario = db.query(Usuario).filter(Usuario.username == form_data.username).first()
